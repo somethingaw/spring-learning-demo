@@ -37,7 +37,7 @@ knife4j:
 authjwt:
   expiration: 60000 # 86400000
   secret:
-    key: aLongSecretStringWhoseBitnessIsEqualToOrGreaterThanTheBitnessOfTheTokenEncryptionAlgorithm
+    key: qwhefiuwhqednqwekdnqkqwerndiwquqcqnckqwnencwqeiuqhdfqwiueduiqwerfddqwedqwdeeqwedqwed
 # springdoc 的paths 配置测试
 paths:
   /user/add:

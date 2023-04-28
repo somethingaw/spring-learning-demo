@@ -66,16 +66,16 @@ public class SpringdocConfig {
                                 .clientCredentials(
                                         new OAuthFlow()
                                                 // 简化模式
-                                                //.authorizationUrl("http://192.168.201.6:10003/auth/oauth/implicit/authorize")
+                                                //.authorizationUrl("http://127.0.0.1:10005/auth/oauth/implicit/authorize")
                                                 // 密码模式
-                                                // .tokenUrl("http://127.0.0.1:10003/auth/oauth/password/token")
+                                                // .tokenUrl("http://127.0.0.1:10005/auth/oauth/password/token")
                                                 // 授权码，待实现
-                                                // .authorizationUrl("http://127.0.0.1:10003/auth/oauth/authcode/authorize")
-                                                // .tokenUrl("http://127.0.0.1:10003/auth/oauth/authcode/token")
+                                                //.authorizationUrl("http://127.0.0.1:10005/auth/oauth/authcode/authorize")
+                                               // .tokenUrl("http://127.0.0.1:10005/auth/oauth/authcode/token")
                                                 // 客户端模式
-                                                .tokenUrl("http://127.0.0.1:10005/auth/oauth/client/token")
+                                                 .tokenUrl("http://127.0.0.1:10005/auth/oauth/client/token")
                                                 // 刷新token
-                                                .refreshUrl("http://192.168.201.6:10005/auth/oauth/refresh/token")
+                                                .refreshUrl("http://127.0.0.1:10005/auth/oauth/refresh/token")
                                                 .scopes(new Scopes()
                                                         .addString("read", "read")
                                                         .addString("update", "update")
