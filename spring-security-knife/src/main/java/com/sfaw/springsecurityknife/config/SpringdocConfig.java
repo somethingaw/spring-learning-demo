@@ -8,9 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * SpringdocConfig
  * springdoc 配置
@@ -53,9 +50,6 @@ public class SpringdocConfig {
 
     /**************************************** oauth2 + security ************************************************/
     private Components oauthComponents() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("client_id", "wy");
-
         return new Components()
                 .addSecuritySchemes(AUTH_SCHEMA_NAME, new SecurityScheme()
                         .type(SecurityScheme.Type.OAUTH2)
@@ -63,17 +57,17 @@ public class SpringdocConfig {
                         .description("oauth2+security")
                         .scheme("bearer")
                         .flows(new OAuthFlows()
-                                .clientCredentials(
+                                .authorizationCode(
                                         new OAuthFlow()
                                                 // 简化模式
                                                 //.authorizationUrl("http://127.0.0.1:10005/auth/oauth/implicit/authorize")
                                                 // 密码模式
                                                 // .tokenUrl("http://127.0.0.1:10005/auth/oauth/password/token")
-                                                // 授权码，待实现
-                                                //.authorizationUrl("http://127.0.0.1:10005/auth/oauth/authcode/authorize")
-                                               // .tokenUrl("http://127.0.0.1:10005/auth/oauth/authcode/token")
+                                                // 授权码，做了简单的接口实现，并没有进行实质校验
+                                                .authorizationUrl("http://127.0.0.1:10005/auth/oauth/authcode/authorize")
+                                                .tokenUrl("http://127.0.0.1:10005/auth/oauth/authcode/token")
                                                 // 客户端模式
-                                                 .tokenUrl("http://127.0.0.1:10005/auth/oauth/client/token")
+                                                // .tokenUrl("http://127.0.0.1:10005/auth/oauth/client/token")
                                                 // 刷新token
                                                 .refreshUrl("http://127.0.0.1:10005/auth/oauth/refresh/token")
                                                 .scopes(new Scopes()

@@ -128,7 +128,9 @@ public class AuthController {
     }
 
     /**
-     * 授权码模式，使用 用户名密码登录，然后重定向，再后端使用 client_id ,和 client_secret 进行token获取
+     * 授权码模式，理论上 使用 用户名密码登录，然后重定向，再后端使用 client_id 和 client_secret 进行token获取
+     * swagger 是传入 client_id 和 client_secret， 然后应该跳转到 授权页面，授权后，调用token 接口，拿到token
+     * 这里简化了，认证接口
      *
      * @param clientId
      * @param redirectUri
@@ -145,12 +147,13 @@ public class AuthController {
                                                     @RequestParam("response_type") String type,
                                                     @RequestParam("state") String state,
                                                     HttpServletResponse response) throws IOException {
-        RegisterRequestDTO dto = new RegisterRequestDTO();
-        dto.setName(clientId);
-        dto.setPassword("123");
-        AuthResponseDTO dto1 = authService.register(dto);
-        // 注意回传 access_token
-        return ResponseEntity.ok(dto1);
+
+        // 这里需要自己做认证 ，跳转到自己的授权页面，
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, redirectUri + "?code=test" + "&state=" + state + "&response_type=" + type)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .build();
 
     }
 
@@ -161,19 +164,15 @@ public class AuthController {
                                                 @RequestParam("client_secret") String clientSecret,
                                                 @RequestParam("grant_type") String grantType,
                                                 @RequestParam("code") String code,
-                                                @RequestParam("redirect_uri") String redirectUri,
                                                 HttpServletRequest request,
                                                 HttpServletResponse response) {
+        // todo 这里code type 校验都没做
         RegisterRequestDTO dto = new RegisterRequestDTO();
         dto.setName(clientId);
-        dto.setPassword("123");
+        dto.setPassword(clientSecret);
         AuthResponseDTO dto1 = authService.register(dto);
-        // 注意回传 access_token
-        return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, redirectUri + "?code=" + dto1.getToken() + "&response_type=token&access_token=" + dto1.getToken())
-                .header("Content-Type", "application/json;charset=UTF-8")
-                .build();
+        dto1.setAccess_token(dto1.getToken());
+        return ResponseEntity.ok(dto1);
     }
 
     /**
@@ -181,13 +180,12 @@ public class AuthController {
      * @param response
      * @return
      */
-    @Operation(summary = "client")
+    @Operation(summary = "refresh token")
     @PostMapping(value = "/oauth/refresh/token")
     @ResponseBody
     public ResponseEntity<Object> refreshToken(HttpServletResponse response) {
         RegisterRequestDTO dto = new RegisterRequestDTO();
-        dto.setName("wy");
-        dto.setPassword("123");
+
         AuthResponseDTO dto1 = authService.register(dto);
         // 注意回传 access_token
         return ResponseEntity.ok(dto1);

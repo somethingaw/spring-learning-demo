@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.Date;
  * @date 2023/4/21 10:12
  **/
 @Service
+@Slf4j
 public class JwtService {
 
 
@@ -34,6 +36,7 @@ public class JwtService {
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
+                .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -45,7 +48,17 @@ public class JwtService {
      * @return
      */
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
+        Claims claims = null;
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(getKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            log.error("Token解析失败，token已经过期或者不正确，：{}", token, e);
+        }
+        return claims;
     }
 
 
@@ -54,10 +67,10 @@ public class JwtService {
         String key = "wofqufwiefnqweofeqwefdqowehdfqiondklasncvaskdfvjbqklfweefqwefascdasdgfSF";
         String token = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject("wy")
+                .setSubject("admin")
                 .setExpiration(new Date(System.currentTimeMillis() + 100000))
                 .signWith(Keys.hmacShaKeyFor(key.getBytes()), SignatureAlgorithm.HS512)
-                .claim("username", "wy")
+                .claim("username", "admin")
                 .claim("id", "123")
                 .compact();
         System.out.println(token);
