@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * AuthService
  *
@@ -47,5 +49,10 @@ public class AuthService {
                         dto.getPassword()));
         final User person = userService.findByName(dto.getName());
         return new AuthResponseDTO(jwtService.generateToken(person.getName()));
+    }
+
+    public AuthResponseDTO refreshToken(HttpServletRequest request) {
+        String token = jwtService.getTokenFromReq(request);
+        return new AuthResponseDTO(jwtService.refreshToken(token));
     }
 }

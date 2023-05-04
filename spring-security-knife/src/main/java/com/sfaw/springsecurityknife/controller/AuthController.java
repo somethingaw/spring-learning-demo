@@ -176,19 +176,16 @@ public class AuthController {
     }
 
     /**
-     *
      * @param response
      * @return
      */
     @Operation(summary = "refresh token")
     @PostMapping(value = "/oauth/refresh/token")
     @ResponseBody
-    public ResponseEntity<Object> refreshToken(HttpServletResponse response) {
-        RegisterRequestDTO dto = new RegisterRequestDTO();
-
-        AuthResponseDTO dto1 = authService.register(dto);
-        // 注意回传 access_token
-        return ResponseEntity.ok(dto1);
+    public ResponseEntity<Object> refreshToken(HttpServletRequest request,
+                                               HttpServletResponse response) {
+        AuthResponseDTO authResponseDTO = authService.refreshToken(request);
+        return ResponseEntity.ok(authResponseDTO);
     }
 
 }
