@@ -6,14 +6,15 @@ import java.util.Objects;
 /**
  * Role
  * 角色信息
+ *
  * @author ArthurW
  * @version 1.0
  * @date 2023/4/21 9:56
  **/
 public enum Role {
 
-    USER(1, "User"),
-    ADMIN(2, "Administrator");
+    USER(1, "ROLE_USER"),
+    ADMIN(2, "ROLE_ADMIN");
 
     private Integer id;
     private String description;
