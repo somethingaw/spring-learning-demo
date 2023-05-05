@@ -2,6 +2,7 @@ package com.sfaw.springsecurityknife.config;
 
 import com.sfaw.springsecurityknife.handler.MyAccessDeniedHander;
 import com.sfaw.springsecurityknife.handler.MyAuthDenyEntryPoint;
+import com.sfaw.springsecurityknife.handler.MyPermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -43,14 +45,19 @@ public class SpringSecurity {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
+    @Autowired
+    private MyPermissionEvaluator myPermissionEvaluator;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests()
+        httpSecurity.authorizeRequests()
                 .antMatchers(this.ignoreUris).permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/docs/**").permitAll()
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
+                // 添加自己的 permission 处理器
+                .expressionHandler(defaultWebSecurityExpressionHandler())
                 // 用于设置角色权限
                 // .anyRequest().hasAnyAuthority("")
                 // .anyRequest().hasAnyRole()
@@ -74,7 +81,7 @@ public class SpringSecurity {
                 .formLogin().disable()
                 // 关闭session机制
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        ;
+
         return httpSecurity.build();
     }
 
@@ -105,4 +112,10 @@ public class SpringSecurity {
         return new MyAuthDenyEntryPoint();
     }
 
+    @Bean
+    public DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler() {
+        DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+        defaultWebSecurityExpressionHandler.setPermissionEvaluator(myPermissionEvaluator);
+        return defaultWebSecurityExpressionHandler;
+    }
 }
