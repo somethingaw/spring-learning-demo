@@ -37,7 +37,7 @@ public class UserController {
 
     @Operation(summary = "更新用户", description = "123", security = {@SecurityRequirement(name = "oauth")})
     // 使用自带的 需要加前缀 ROLE_ （SecurityExpressionRoot）, 或者自己写一个bean进行校验
-    @PreAuthorize("hasPermission('user', 'read') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasPermission('USER', 'update') or hasRole('ROLE_USER')")
     @PostMapping("/update")
     public String updateUser() {
         return "update user success";
