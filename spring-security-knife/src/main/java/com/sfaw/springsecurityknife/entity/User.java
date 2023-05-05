@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ public class User implements Serializable, UserDetails {
     private String name;
     private String password;
 
-    private Set<Integer> roles = new HashSet<>(Collections.singletonList(Role.USER.getId()));
+    private Set<Integer> roles = new HashSet<>();
 
     public User() {
         super();
@@ -106,7 +105,7 @@ public class User implements Serializable, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(r -> new SimpleGrantedAuthority(Role.fromId(r).name()))
+                .map(r -> new SimpleGrantedAuthority(Role.fromId(r).getDescription()))
                 .collect(Collectors.toSet());
     }
 

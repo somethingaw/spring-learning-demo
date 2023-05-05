@@ -2,6 +2,7 @@ package com.sfaw.springsecurityknife.config;
 
 import com.sfaw.springsecurityknife.service.JwtService;
 import io.jsonwebtoken.Claims;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,10 +41,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            final String authorization = request.getHeader("Authorization");
-            if (authorization != null && authorization.startsWith("Bearer ")) {
-
-                final String token = authorization.substring(7);
+            final String token = jwtService.getTokenFromReq(request);
+            if (StringUtils.isNotBlank(token)) {
                 // todo 这里超时会抛出异常，记得改写下，先判断token 有没有问题
                 final Claims claims = jwtService.getClaims(token);
                 if (claims.getExpiration().after(new Date())) {

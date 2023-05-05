@@ -31,7 +31,7 @@ public class SpringdocConfig {
     @Bean
     public OpenAPI openAPI(Info infoConfig) {
         return new OpenAPI()
-                .paths(paths())
+                //.paths(paths())
                 .components(oauthComponents())
                 .info(infoConfig)
                 .addSecurityItem(oauthSecurityRequirement())

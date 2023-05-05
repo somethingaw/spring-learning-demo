@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -29,6 +30,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 // 注解内部 @EnableGlobalAuthentication 会开启全局认证
 @EnableWebSecurity
+// 开启@PreAuthrize、@PostAuthorize注解拦截
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurity {
 
     @Value("${spring.security.oauth2.ignore-uris}")
@@ -48,6 +51,10 @@ public class SpringSecurity {
                 .antMatchers("/docs/**").permitAll()
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
+                // 用于设置角色权限
+                // .anyRequest().hasAnyAuthority("")
+                // .anyRequest().hasAnyRole()
+                // .antMatchers().hasAnyRole()
                 .and()
                 // 注入 authenticationProvider
                 .authenticationProvider(authenticationProvider())

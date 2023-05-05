@@ -1,14 +1,18 @@
 package com.sfaw.springsecurityknife.service;
 
+import com.sfaw.springsecurityknife.constants.CommonConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -31,6 +35,22 @@ public class JwtService {
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
+
+    public String getTokenFromReq(HttpServletRequest request) {
+        String authorization = request.getHeader(CommonConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            return null;
+        }
+        return getRealToken(authorization);
+    }
+
+    public String getRealToken(String token) {
+        if (token.startsWith(CommonConstants.BEARER)) {
+            return token.substring(CommonConstants.HEADER_PREFIX_LENGTH);
+        } else {
+            return token;
+        }
     }
 
     public String generateToken(String username) {
@@ -61,6 +81,29 @@ public class JwtService {
         return claims;
     }
 
+
+    public String refreshToken(String oldToken) {
+        String token = getRealToken(oldToken);
+        Claims claims = getClaims(token);
+        // 如果token在30分钟之内刚刷新过，返回原token
+        // 这里也可以进行失效时间的延长
+        if (tokenRefreshJustBefore(claims)) {
+            return oldToken;
+        } else {
+            return generateToken(claims.getSubject());
+        }
+    }
+
+    /**
+     * 判断token在指定时间内是否刚刚刷新过
+     */
+    private boolean tokenRefreshJustBefore(Claims claims) {
+        Date refreshDate = new Date();
+        if (refreshDate.after(claims.getExpiration()) && refreshDate.before(DateUtils.addMinutes(claims.getExpiration(), 30))) {
+            return true;
+        }
+        return false;
+    }
 
 
     public static void main(String[] args) {
