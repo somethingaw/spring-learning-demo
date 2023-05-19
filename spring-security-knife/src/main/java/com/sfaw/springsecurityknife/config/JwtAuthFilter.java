@@ -41,14 +41,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            final String token = jwtService.getTokenFromReq(request);
+            String token = jwtService.getTokenFromReq(request);
             if (StringUtils.isNotBlank(token)) {
                 // todo 这里超时会抛出异常，记得改写下，先判断token 有没有问题
                 final Claims claims = jwtService.getClaims(token);
                 if (claims.getExpiration().after(new Date())) {
-                    final String username = claims.getSubject();
-                    final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    final UsernamePasswordAuthenticationToken authToken =
+                    String username = claims.getSubject();
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -4,8 +4,8 @@ server:
 spring:
   security:
     oauth2:
-      # 忽略的地址
-      ignore-uris: /swagger-ui.html,/swagger-ui/**,/v3/api-docs/**,/doc.html,/webjars/**
+      # 白名单，不进行校验的地址
+      ignore-uris: /doc.html
 # spring doc 配置
 springdoc:
   swagger-ui:

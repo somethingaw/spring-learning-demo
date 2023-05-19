@@ -157,7 +157,7 @@ public class AuthController {
 
     }
 
-    @Operation(summary = "client")
+    @Operation(summary = "auth code")
     @PostMapping(value = "/oauth/authcode/token")
     @ResponseBody
     public ResponseEntity<Object> authcodeToken(@RequestParam("client_id") String clientId,
@@ -166,7 +166,7 @@ public class AuthController {
                                                 @RequestParam("code") String code,
                                                 HttpServletRequest request,
                                                 HttpServletResponse response) {
-        // todo 这里code type 校验都没做
+        // todo 这里code type 校验都没做 需要校验用户信息和appcode、appsecret
         RegisterRequestDTO dto = new RegisterRequestDTO();
         dto.setName(clientId);
         dto.setPassword(clientSecret);

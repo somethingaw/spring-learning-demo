@@ -2,6 +2,7 @@ package com.sfaw.springsecurityknife.service;
 
 import com.sfaw.springsecurityknife.entity.User;
 import com.sfaw.springsecurityknife.enums.Role;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class UserService {
         person.setId(10L);
         person.setName("admin");
         // 如果用作登录用户保存到数据库，需要使用 new BCryptPasswordEncoder().encode("admin") 加密
-        person.setPassword("admin");
+        person.setPassword(new BCryptPasswordEncoder().encode("admin"));
         person.setRoles(Collections.singleton(Role.ADMIN));
         personMap.put(10L, person);
     }
