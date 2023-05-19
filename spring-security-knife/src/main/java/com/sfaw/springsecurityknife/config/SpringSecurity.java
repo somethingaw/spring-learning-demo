@@ -1,6 +1,6 @@
 package com.sfaw.springsecurityknife.config;
 
-import com.sfaw.springsecurityknife.handler.MyAccessDeniedHander;
+import com.sfaw.springsecurityknife.handler.MyAccessDeniedHandler;
 import com.sfaw.springsecurityknife.handler.MyAuthDenyEntryPoint;
 import com.sfaw.springsecurityknife.handler.MyPermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -48,13 +49,26 @@ public class SpringSecurity {
     @Autowired
     private MyPermissionEvaluator myPermissionEvaluator;
 
+    /**
+     * 静态文件放行,这种方式不会走过滤器链路
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/css/**", "/js/**", "/index.html", "/img/**", "/fonts/**", "/favicon.ico", "/verifyCode", "/**.html");
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity.authorizeRequests()
+                // 白名单配置
                 .antMatchers(this.ignoreUris).permitAll()
+                // swagger 页面地址放开
+                .antMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/doc.html").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/docs/**").permitAll()
-                .antMatchers("/login").permitAll()
+                // 关于登录的一些接口
+                .antMatchers("/tologin", "/loginpage.html", "/app/getApp", "/app/addApp").permitAll()
                 .anyRequest().authenticated()
                 // 添加自己的 permission 处理器
                 .expressionHandler(defaultWebSecurityExpressionHandler())
@@ -77,8 +91,22 @@ public class SpringSecurity {
                 .and()
                 // 关闭csrf
                 .csrf().disable()
-                // 关闭 formLogin
-                .formLogin().disable()
+                //.and()
+                // 开启登录 formLogin
+                .formLogin() //.disable()
+                // 登录页面参数 默认username,password
+                .usernameParameter("username")
+                .passwordParameter("password")
+                // 登录页面
+                .loginPage("/loginpage.html")
+                // 登录接口  不配置，会由前端发起调用，配置后，就会在 UsernamePasswordAuthenticationFilter 中进行用户名和密码校验，可以不真实存在的地址
+                .loginProcessingUrl("/tologin")
+                // 登录成功默认跳转页面
+                .defaultSuccessUrl("/userinfo.html")
+                // .defaultSuccessUrl("/doc.html", true)
+                .permitAll()
+
+                .and()
                 // 关闭session机制
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -103,8 +131,8 @@ public class SpringSecurity {
     }
 
     @Bean
-    public MyAccessDeniedHander accessDeniedHandler() {
-        return new MyAccessDeniedHander();
+    public MyAccessDeniedHandler accessDeniedHandler() {
+        return new MyAccessDeniedHandler();
     }
 
     @Bean

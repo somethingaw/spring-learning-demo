@@ -9,25 +9,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * MyAccessDeniedHander
- * 权限不足异常处理器
- *
+ * MyAccessDeniedHander 权限不足异常处理器
  * @author ArthurW
  * @version 1.0
  * @date 2023/4/27 14:02
  **/
-public class MyAccessDeniedHander implements AccessDeniedHandler {
+public class MyAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request,
-                       HttpServletResponse response,
-                       AccessDeniedException e) throws IOException, ServletException {
+            HttpServletResponse response,
+            AccessDeniedException e) throws IOException, ServletException {
 
         response.setHeader("Cache-Control", "no-cache");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().println("无权访问");
+        response.getWriter().println("无权访问：无权限或者无该接口权限");
         response.getWriter().flush();
     }
 }

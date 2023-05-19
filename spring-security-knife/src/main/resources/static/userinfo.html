@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户详情页面</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+<h1>用户详情页面</h1>
+<!--  <p><b>code：</b>admin</p>-->
+<!--  <p><b>secret：</b>admin</p>-->
+
+<a href="http://127.0.0.1:10005/doc.html">doc页面链接</a>
+<div id="1">
+    <!-- <img src="../img2/XXX.png"> 此处暂先注释掉静态的图片效果-->
+</div>
+
+
+<form action="http://127.0.0.1:10005/app/addApp" method="post">
+    code:<input type="text" name="code"/><br>
+    <input type="submit" value="Submit"/>
+</form>
+
+<!--  <form action="http://127.0.0.1:10005/app/getApp" method="get">-->
+<!--      <input type="submit" value="查询"/>-->
+<!--  </form>-->
+
+<!--  <button onclick="getAPP()">Click</button>-->
+
+<div id="info"></div>
+
+</body>
+
+<script type="text/javascript">
+    $(function getAPP() {
+        $.ajax({
+            method: 'get',
+            url: 'http://127.0.0.1:10005/app/getApp',
+            async: true,
+            dataType: "json",
+            jsonp: 'jsoncallback',
+            success: function (data) {
+                var tabStr = "<table border='1'> <tr>\n" +
+                    "        <th>AppCode</th>\n" +
+                    "        <th>AppSecret</th>\n" +
+                    "    </tr>";
+                $.each(data, function (index, n) {
+                    tabStr += "<tr><td>" + data[index].code
+                        + "</td><td>" + data[index].secret
+                        + "</td></tr>";
+                })
+                // var code = data.code;
+                // var sec = data.secret;
+                // var tabStr = "<table border='1'> <tr>\n" +
+                //     "        <th>AppCode</th>\n" +
+                //     "        <th>AppSecret</th>\n" +
+                //     "    </tr>";
+                // tabStr += "<tr><td>" + code
+                //     + "</td><td>" + sec
+                //     + "</td></tr>";
+                tabStr += "</table>";
+                $('#info').html(tabStr);
+
+
+            },
+            error: function () {
+                $('#info').html("有问题");
+            }
+        });
+
+    });
+
+</script>
+
+</html>
