@@ -45,3 +45,7 @@ paths:
       operationId: addUser
       summary: 123
       description: "[这是一个链接](https://www.baidu.com/)"
+
+doc:
+  oauth:
+    url: http://127.0.0.1:10005/auth/oauth/authcode/authorize

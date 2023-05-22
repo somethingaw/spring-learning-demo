@@ -17,3 +17,9 @@ Some demos in the process of learning spring！
 2. 接口的 permission 校验
 3. 接口的 hasRole 校验
 4. 模拟简单自定义登录页面
+5. 登录成功操作 实现 AuthenticationSuccessHandler
+
+## TODO
+
+1. 改造 token，使用对象
+2. 改造 appcode 和 appSecret，使其与用户体系关联上

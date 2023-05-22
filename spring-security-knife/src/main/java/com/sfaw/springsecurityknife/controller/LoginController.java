@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * LoginController
- * @author wy
+ * @author ArthurW
  * @version 1.0
  * @date 2023/5/16 10:28
  **/

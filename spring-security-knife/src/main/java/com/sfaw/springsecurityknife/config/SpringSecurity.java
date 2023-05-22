@@ -103,47 +103,63 @@ public class SpringSecurity {
                 .loginProcessingUrl("/tologin")
                 // 登录成功默认跳转页面
                 .defaultSuccessUrl("/userinfo.html")
-                // .defaultSuccessUrl("/doc.html", true)
-                .permitAll()
+				// .defaultSuccessUrl("/doc.html", true)
+				.permitAll()
 
-                .and()
-                // 关闭session机制
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.and()
+				// 关闭session机制
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        return httpSecurity.build();
-    }
+		return httpSecurity.build();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	/**
+	 * 加密算法
+	 * @return
+	 */
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 
-    private AuthenticationProvider authenticationProvider() {
-        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
+	/**
+	 * 认证设置
+	 * @return
+	 */
+	private AuthenticationProvider authenticationProvider() {
+		final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+		authenticationProvider.setUserDetailsService(userDetailsService);
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
+		return authenticationProvider;
+	}
 
-    @Bean
-    public MyAccessDeniedHandler accessDeniedHandler() {
-        return new MyAccessDeniedHandler();
-    }
+	/**
+	 * 权限认证失败处理器
+	 * @return
+	 */
+	@Bean
+	public MyAccessDeniedHandler accessDeniedHandler() {
+		return new MyAccessDeniedHandler();
+	}
 
-    @Bean
-    public MyAuthDenyEntryPoint authEntryPoint() {
-        return new MyAuthDenyEntryPoint();
-    }
+	@Bean
+	public MyAuthDenyEntryPoint authEntryPoint() {
+		return new MyAuthDenyEntryPoint();
+	}
 
-    @Bean
-    public DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler() {
-        DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-        defaultWebSecurityExpressionHandler.setPermissionEvaluator(myPermissionEvaluator);
-        return defaultWebSecurityExpressionHandler;
-    }
+	/**
+	 * 设置 permission 校验
+	 * @return
+	 */
+	@Bean
+	public DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler() {
+		DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+		defaultWebSecurityExpressionHandler.setPermissionEvaluator(myPermissionEvaluator);
+		return defaultWebSecurityExpressionHandler;
+	}
 }

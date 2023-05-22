@@ -3,6 +3,7 @@ package com.sfaw.springsecurityknife.config;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,9 @@ import org.springframework.context.annotation.Configuration;
 public class SpringdocConfig {
 
     public static final String AUTH_SCHEMA_NAME = "oauth";
+
+    @Value("${doc.oauth.url}")
+    public String authUrl;
 
     @Bean
     @ConfigurationProperties(prefix = "springdoc.api-docs.info")
@@ -64,7 +68,7 @@ public class SpringdocConfig {
                                                 // 密码模式
                                                 // .tokenUrl("http://127.0.0.1:10005/auth/oauth/password/token")
                                                 // 授权码，做了简单的接口实现，并没有进行实质校验
-                                                .authorizationUrl("http://127.0.0.1:10005/auth/oauth/authcode/authorize")
+                                                .authorizationUrl(authUrl)
                                                 .tokenUrl("http://127.0.0.1:10005/auth/oauth/authcode/token")
                                                 // 客户端模式
                                                 // .tokenUrl("http://127.0.0.1:10005/auth/oauth/client/token")
